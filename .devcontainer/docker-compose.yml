@@ -1,0 +1,32 @@
+services:
+  devcontainer:
+    build:
+      context: ./devcontainer
+      dockerfile: Dockerfile
+    volumes:
+      - ../projects/:/projects
+    env_file:
+      - ../.env
+    dns:
+      - 10.0.2.20
+    networks:
+      - ls
+    tty: true
+    stdin_open: true
+  localstack:
+    image: localstack/localstack
+    ports:
+      - '4566:4566'
+      - '4510-4559:4510-4559'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    env_file:
+      - ../.env
+    networks:
+      ls:
+        ipv4_address: 10.0.2.20
+networks:
+  ls:
+    ipam:
+      config:
+        - subnet: 10.0.2.0/24
